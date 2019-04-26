@@ -7,7 +7,7 @@
 
 /// <reference types="node" />
 
-import {Readable} from 'stream';
+import { Readable } from 'stream';
 import * as SlonikSymbol from './symbols';
 
 //
@@ -34,18 +34,14 @@ export interface IdentifierTokenType {
 export type IdentifierListMemberType = string[] | {
     alias: string
     identifier: string[]
-}
+};
 
 export interface IdentifierListTokenType {
-    identifiers: IdentifierListMemberType[]
-    type: typeof SlonikSymbol.IdentifierListTokenSymbol
+    identifiers: IdentifierListMemberType[];
+    type: typeof SlonikSymbol.IdentifierListTokenSymbol;
 }
 
-export interface SqlSqlTokenType {
-    sql: string;
-    type: typeof SlonikSymbol.SqlTokenSymbol;
-    values: PrimitiveValueExpressionType[];
-}
+export type SqlSqlTokenType<T> = TaggedTemplateLiteralInvocationType<T>
 
 export interface RawSqlTokenType {
     sql: string;
@@ -80,23 +76,23 @@ export interface UnnestSqlTokenType {
     type: typeof SlonikSymbol.UnnestTokenSymbol;
 }
 
-export type ComparisonPredicateTokenType = {
-    leftOperand: ValueExpressionType,
-    operator: ComparisonOperatorType,
-    rightOperand: ValueExpressionType,
-    type: typeof SlonikSymbol.ComparisonPredicateTokenSymbol
-};
+export interface ComparisonPredicateTokenType {
+    leftOperand: ValueExpressionType;
+    operator: ComparisonOperatorType;
+    rightOperand: ValueExpressionType;
+    type: typeof SlonikSymbol.ComparisonPredicateTokenSymbol;
+}
 
-export type BooleanExpressionTokenType = {
-    members: ValueExpressionType[],
-    operator: LogicalBooleanOperatorType,
-    type: typeof SlonikSymbol.ComparisonPredicateTokenSymbol
-};
+export interface BooleanExpressionTokenType {
+    members: ValueExpressionType[];
+    operator: LogicalBooleanOperatorType;
+    type: typeof SlonikSymbol.ComparisonPredicateTokenSymbol;
+}
 
-export type AssignmentListTokenType = {
-    namedAssignment: NamedAssignmentType,
-    type: typeof SlonikSymbol.ComparisonPredicateTokenSymbol
-};
+export interface AssignmentListTokenType {
+    namedAssignment: NamedAssignmentType;
+    type: typeof SlonikSymbol.ComparisonPredicateTokenSymbol;
+}
 
 export type PrimitiveValueExpressionType = string | number | boolean | null;
 
@@ -106,7 +102,7 @@ export type SqlTokenType =
     IdentifierTokenType |
     IdentifierListTokenType |
     RawSqlTokenType |
-    SqlSqlTokenType |
+    SqlSqlTokenType<unknown> |
     TupleListSqlTokenType |
     TupleSqlTokenType |
     UnnestSqlTokenType |
@@ -118,7 +114,7 @@ export type ValueExpressionType =
     SqlTokenType |
     PrimitiveValueExpressionType;
 
-export type NamedAssignmentType = Record<string, ValueExpressionType>
+export type NamedAssignmentType = Record<string, ValueExpressionType>;
 
 //
 // DATABASE
@@ -199,7 +195,7 @@ export type QueryMethodType<RowType, Result> = (
     sql: TaggedTemplateLiteralInvocationType<RowType>,
     values?: PrimitiveValueExpressionType[]
 ) => Promise<Result>;
-export type QueryMethodParams<T> = Parameters<QueryMethodType<T, never>>
+export type QueryMethodParams<T> = Parameters<QueryMethodType<T, never>>;
 
 export interface NoticeType {
     code: string;
@@ -225,15 +221,15 @@ export type QueryResultRowType<ColumnName extends string = string> = {
     [name in ColumnName]: QueryResultRowColumnType;
 };
 
-export type QueryAnyFirstFunctionType = <T>(...args: QueryMethodParams<T>) => Promise<T[keyof T][]>
-export type QueryAnyFunctionType = <T>(...args: QueryMethodParams<T>) => Promise<T[]>
-export type QueryFunctionType = <T>(...args: QueryMethodParams<T>) => Promise<QueryResultType<T>>
-export type QueryManyFirstFunctionType = QueryAnyFirstFunctionType
-export type QueryManyFunctionType = QueryAnyFunctionType
-export type QueryMaybeOneFirstFunctionType = <T>(...args: QueryMethodParams<T>) => Promise<T[keyof T] | null>
-export type QueryMaybeOneFunctionType = <T>(...args: QueryMethodParams<T>) => Promise<T | null>
-export type QueryOneFirstFunctionType = <T>(...args: QueryMethodParams<T>) => Promise<T[keyof T]>
-export type QueryOneFunctionType = <T>(...args: QueryMethodParams<T>) => Promise<T>
+export type QueryAnyFirstFunctionType = <T>(...args: QueryMethodParams<T>) => Promise<Array<T[keyof T]>>;
+export type QueryAnyFunctionType = <T>(...args: QueryMethodParams<T>) => Promise<T[]>;
+export type QueryFunctionType = <T>(...args: QueryMethodParams<T>) => Promise<QueryResultType<T>>;
+export type QueryManyFirstFunctionType = QueryAnyFirstFunctionType;
+export type QueryManyFunctionType = QueryAnyFunctionType;
+export type QueryMaybeOneFirstFunctionType = <T>(...args: QueryMethodParams<T>) => Promise<T[keyof T] | null>;
+export type QueryMaybeOneFunctionType = <T>(...args: QueryMethodParams<T>) => Promise<T | null>;
+export type QueryOneFirstFunctionType = <T>(...args: QueryMethodParams<T>) => Promise<T[keyof T]>;
+export type QueryOneFunctionType = <T>(...args: QueryMethodParams<T>) => Promise<T>;
 
 export interface CommonQueryMethodsType {
     any: QueryAnyFunctionType;
@@ -297,50 +293,49 @@ export interface TaggedTemplateLiteralInvocationType<Result = QueryResultRowType
 export const sql: SqlTaggedTemplateType;
 
 export interface SqlTaggedTemplateType {
-    (template: TemplateStringsArray, ...vals: ValueExpressionType[]): SqlSqlTokenType;
+    <T = QueryResultRowType>(template: TemplateStringsArray, ...vals: ValueExpressionType[]): SqlSqlTokenType<T>;
     array: (
         values: PrimitiveValueExpressionType[],
         memberType: string
-    ) => ArraySqlTokenType,
+    ) => ArraySqlTokenType;
     assignmentList: (
         namedAssignmentValueBindings: NamedAssignmentType
-    ) => AssignmentListTokenType,
+    ) => AssignmentListTokenType;
     booleanExpression: (
         members: ValueExpressionType[],
         operator: LogicalBooleanOperatorType
-    ) => BooleanExpressionTokenType,
+    ) => BooleanExpressionTokenType;
     comparisonPredicate: (
         leftOperand: ValueExpressionType,
         operator: ComparisonOperatorType,
         rightOperand: ValueExpressionType
-    ) => ComparisonPredicateTokenType,
+    ) => ComparisonPredicateTokenType;
     identifier: (
         names: string[]
-    ) => IdentifierTokenType,
+    ) => IdentifierTokenType;
     identifierList: (
         identifiers: IdentifierListMemberType[]
-    ) => IdentifierListTokenType,
+    ) => IdentifierListTokenType;
     raw: (
         rawSql: string,
         values?: PrimitiveValueExpressionType[]
-    ) => RawSqlTokenType,
+    ) => RawSqlTokenType;
     tuple: (
         values: ValueExpressionType[]
-    ) => TupleSqlTokenType,
+    ) => TupleSqlTokenType;
     tupleList: (
         tuples: ValueExpressionType[][]
-    ) => TupleListSqlTokenType,
+    ) => TupleListSqlTokenType;
     unnest: (
-
         // Value might be PrimitiveValueExpressionType[],
         // or it can be infinitely nested array, e.g.
         // https://github.com/gajus/slonik/issues/44
         tuples: any[][],
         columnTypes: string[]
-    ) => UnnestSqlTokenType,
+    ) => UnnestSqlTokenType;
     valueList: (
         values: ValueExpressionType[]
-    ) => ValueListSqlTokenType
+    ) => ValueListSqlTokenType;
 }
 
 export interface SqlFragmentType {

@@ -99,28 +99,30 @@ pool.connect(async (connection) => {
 pool.query(sql`SELECT * FROM table WHERE name = '${VALUE}'`);
 
 const typedQuery = async () => {
-  const getFooBarQuery = (limit: number): TaggedTemplateLiteralInvocationType<{foo: string, bar: number}> =>
-    sql`select foo, bar from foobartable limit ${limit}`;
+  interface Foo { foo: string; }
+  interface FooBar extends Foo { bar: number; }
+  const getFooQuery = (limit: number) =>
+    sql<Foo>`select foo from foobartable limit ${limit}`;
 
-  const getFooQuery = (limit: number): TaggedTemplateLiteralInvocationType<{foo: string}> =>
-    sql`select foo from foobartable limit ${limit}`;
+  const getFooBarQuery = (limit: number) =>
+    sql<FooBar>`select foo, bar from foobartable limit ${limit}`;
 
-  // $ExpectType QueryResultType<{ foo: string; bar: number; }>
+  // $ExpectType QueryResultType<FooBar>
   await pool.query(getFooBarQuery(10));
 
   // $ExpectType string
   await pool.oneFirst(getFooQuery(10));
 
-  // $ExpectType { foo: string; bar: number; }
+  // $ExpectType FooBar
   await pool.one(getFooBarQuery(10));
 
   // $ExpectType string | null
   await pool.maybeOneFirst(getFooQuery(10));
 
-  // $ExpectType { foo: string; bar: number; } | null
+  // $ExpectType FooBar | null
   await pool.maybeOne(getFooBarQuery(10));
 
-  // $ExpectType { foo: string; bar: number; }[]
+  // $ExpectType FooBar[]
   await pool.any(getFooBarQuery(10));
 };
 createPool('postgres://localhost', {
