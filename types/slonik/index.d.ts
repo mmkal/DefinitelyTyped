@@ -102,7 +102,7 @@ export type SqlTokenType =
     IdentifierTokenType |
     IdentifierListTokenType |
     RawSqlTokenType |
-    SqlSqlTokenType<unknown> |
+    SqlSqlTokenType<any> |
     TupleListSqlTokenType |
     TupleSqlTokenType |
     UnnestSqlTokenType |
