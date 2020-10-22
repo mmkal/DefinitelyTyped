@@ -4999,6 +4999,12 @@
             "asOfVersion": "3.0.0"
         },
         {
+            "libraryName": "slonik",
+            "typingsPackageName": "slonik",
+            "sourceRepoURL": "https://github.com/gajus/slonik",
+            "asOfVersion": "23.0.0"
+        },
+        {
             "libraryName": "smooth-scrollbar",
             "typingsPackageName": "smooth-scrollbar",
             "sourceRepoURL": "https://github.com/idiotWu/smooth-scrollbar",
